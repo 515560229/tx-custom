@@ -10,17 +10,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.transaction.annotation.Propagation;
 
 import edu.ldcollege.tx.custom.tx.CustomTransactionManagement;
-import edu.ldcollege.tx.custom.tx.CustomTransactionManagement.TransactionAttribute;
 
 @PropertySource("classpath:jdbc.properties")
 @Configuration
 @ComponentScan
-@CustomTransactionManagement(expression = "execution(* edu.ldcollege.tx.custom.service.*.*(..))", transactionAttributes = {
-		@TransactionAttribute(methodName = "query*", propagation = Propagation.REQUIRED),
-		})
+@CustomTransactionManagement
 public class CustomeAppConfig {
 	@Value("${jdbc.url}")
 	private String url;

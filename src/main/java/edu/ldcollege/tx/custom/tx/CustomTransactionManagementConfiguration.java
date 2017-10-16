@@ -25,6 +25,7 @@ public class CustomTransactionManagementConfiguration extends AbstractTransactio
 	@Autowired
 	private Environment environment;
 	
+	//事务Aop的Advisor(切面和拦截器)
 	@Bean(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public Advisor transactionAdvisor(TransactionAttributeSource txAttrSource,
@@ -33,13 +34,13 @@ public class CustomTransactionManagementConfiguration extends AbstractTransactio
 		if (this.enableTx == null) {
 			throw new IllegalArgumentException("@CustomTransactionManagement is to be imported ");
 		}
-//		advisor.setExpression(this.enableTx.getString("expression"));
 		advisor.setExpression(environment.getProperty("transaction.pointcut.expression"));
 		advisor.setOrder(this.enableTx.<Integer>getNumber("order"));
 		advisor.setAdvice(txInterceptor);
 		return advisor;
 	}
-
+	
+	//声明事务属性Bean
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionAttributeSource transactionAttributeSource() throws IOException {
@@ -54,6 +55,7 @@ public class CustomTransactionManagementConfiguration extends AbstractTransactio
 		return new CustomTransactionAttributeSource(nameMatchTransactionAttributeSource);
 	}
 
+	//声明事务方法的拦截器
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionInterceptor transactionInterceptor() throws IOException {
@@ -70,7 +72,7 @@ public class CustomTransactionManagementConfiguration extends AbstractTransactio
 		this.enableTx = AnnotationAttributes
 				.fromMap(importMetadata.getAnnotationAttributes(CustomTransactionManagement.class.getName(), false));
 		if (this.enableTx == null) {
-			throw new IllegalArgumentException("@CustomEnableTransactionManagement is not present on importing class "
+			throw new IllegalArgumentException("@CustomTransactionManagement is not present on importing class "
 					+ importMetadata.getClassName());
 		}
 	}
